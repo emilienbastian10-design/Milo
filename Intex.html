@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="🐾 Pipi">
+<title>🐾 Carnet de Pipi</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Nunito',sans-serif;background:#EEF6FF;min-height:100vh;padding:20px 16px 100px;background-image:radial-gradient(circle at 10% 20%,rgba(100,180,255,0.1) 0%,transparent 50%),radial-gradient(circle at 90% 80%,rgba(60,140,255,0.07) 0%,transparent 50%)}
+input,textarea,button{font-family:'Nunito',sans-serif}
+.baloo{font-family:'Baloo 2',cursive}
+
+/* Layout */
+.dog-name-wrap{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px;margin-top:8px}
+#dogNameInput{font-family:‘Baloo 2’,cursive;font-size:1.8rem;font-weight:800;color:#2563EB;background:transparent;border:none;border-bottom:3px solid #60A5FA;outline:none;text-align:center;width:200px;padding:2px 4px}
+#dogNameInput::placeholder{color:#93C5FD}
+.sync-status{text-align:center;margin-bottom:16px;font-size:.75rem;color:#93C5FD;min-height:18px}
+
+/* Tabs */
+.tabs{display:flex;background:white;border-radius:14px;padding:4px;gap:4px;margin-bottom:24px;box-shadow:0 2px 10px rgba(61,35,20,0.1)}
+.tab{flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;font-family:‘Baloo 2’,cursive;font-weight:700;font-size:.95rem;background:transparent;color:#8B5E3C;transition:all .2s}
+.tab.active{background:#2563EB;color:white}
+
+/* Action buttons */
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.btn-action{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 10px;border:none;border-radius:20px;cursor:pointer;font-family:‘Baloo 2’,cursive;font-weight:600;font-size:.95rem;color:white;box-shadow:0 4px 16px rgba(61,35,20,0.12);transition:transform .15s}
+.btn-action:active{transform:scale(.93)}
+.btn-action .icon{font-size:2.2rem}
+.btn-pipi{background:linear-gradient(135deg,#F5C842,#E8A820)}
+.btn-caca{background:linear-gradient(135deg,#9B6540,#7B4F2E)}
+.btn-manger{background:linear-gradient(135deg,#E8735A,#D45A40)}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
+.stat-card{background:white;border-radius:14px;padding:12px 8px;text-align:center;box-shadow:0 2px 10px rgba(61,35,20,0.12)}
+.stat-card .count{font-family:‘Baloo 2’,cursive;font-size:1.6rem;font-weight:800;line-height:1}
+.stat-card .label{font-size:.72rem;color:#8B5E3C;margin-top:2px}
+
+/* Day nav */
+.day-nav{display:flex;align-items:center;background:white;border-radius:14px;padding:10px 14px;box-shadow:0 2px 10px rgba(61,35,20,0.12);margin-bottom:14px}
+.day-nav-btn{background:none;border:none;cursor:pointer;font-size:1.6rem;color:#8B5E3C;padding:2px 10px;border-radius:8px;line-height:1}
+.day-nav-btn:disabled{opacity:.2;cursor:default}
+.day-nav-label{font-family:‘Baloo 2’,cursive;font-weight:700;font-size:1rem;color:#3D2314;text-align:center;flex:1}
+.day-nav-sub{font-size:.72rem;color:#8B5E3C;font-family:‘Nunito’;font-weight:400;display:block}
+.btn-del-day{background:none;border:none;cursor:pointer;font-size:1rem;color:#e07070;padding:2px 6px;border-radius:8px}
+
+/* Log */
+.section-title{font-family:‘Baloo 2’,cursive;font-size:1.1rem;font-weight:700;color:#3D2314;margin-bottom:12px}
+.log-list{display:flex;flex-direction:column;gap:8px}
+.log-item{background:white;border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(61,35,20,0.1);animation:slideIn .3s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.log-icon{font-size:1.5rem;width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.log-info{flex:1}
+.log-type{font-weight:700;font-size:.95rem;color:#3D2314}
+.log-qty{font-size:.82rem;color:#E8735A;font-weight:700;margin-left:6px}
+.log-time{font-size:.8rem;color:#8B5E3C}
+.log-ago{font-size:.75rem;color:#b89a80}
+.btn-icon{background:none;border:none;cursor:pointer;font-size:1rem;padding:4px;border-radius:8px}
+.empty{text-align:center;color:#c4a882;padding:30px 0;font-size:.95rem}
+.empty .paw{font-size:2rem;display:block;margin-bottom:8px}
+
+/* Notes */
+.note-input-row{display:flex;gap:8px;margin-bottom:16px}
+.note-input-row textarea{flex:1;padding:12px 14px;border-radius:14px;border:2px solid #bfdbfe;background:white;font-size:.95rem;color:#3D2314;outline:none;resize:none;line-height:1.5}
+.btn-add-note{padding:0 16px;border-radius:14px;border:none;background:linear-gradient(135deg,#2563EB,#1D4ED8);color:white;font-family:‘Baloo 2’,cursive;font-weight:700;font-size:1.2rem;cursor:pointer;flex-shrink:0}
+.note-card{background:#FFFDE7;border-radius:14px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;box-shadow:0 2px 8px rgba(61,35,20,0.08);border-left:4px solid #FBC02D;animation:slideIn .3s ease}
+.note-text{font-size:.95rem;color:#3D2314;line-height:1.5;white-space:pre-wrap;flex:1}
+.note-time{font-size:.72rem;color:#b89a80;margin-top:4px}
+.note-hint{font-size:.75rem;color:#93C5FD;text-align:right;margin-top:10px}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(61,35,20,0.45);display:flex;align-items:flex-end;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity .25s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-box{background:#EEF6FF;border-radius:24px 24px 0 0;padding:28px 24px 44px;width:100%;max-width:480px;transform:translateY(100%);transition:transform .3s cubic-bezier(.34,1.2,.64,1);box-shadow:0 -8px 40px rgba(61,35,20,0.2);overflow-y:auto;max-height:92vh}
+.modal-overlay.open .modal-box{transform:translateY(0)}
+.modal-center{display:flex;flex-direction:column;align-items:center}
+.modal-title{font-family:‘Baloo 2’,cursive;font-size:1.4rem;font-weight:800;color:#3D2314;text-align:center;margin-bottom:4px}
+.modal-sub{text-align:center;color:#8B5E3C;font-size:.85rem;margin-bottom:18px}
+
+/* Time modal */
+.time-modal-overlay{position:fixed;inset:0;background:rgba(61,35,20,0.45);display:flex;align-items:center;justify-content:center;z-index:200;padding:24px;opacity:0;pointer-events:none;transition:opacity .25s}
+.time-modal-overlay.open{opacity:1;pointer-events:all}
+.time-modal-box{background:#EEF6FF;border-radius:24px;padding:28px 24px;width:100%;max-width:320px;box-shadow:0 8px 40px rgba(61,35,20,0.2)}
+
+/* Qty row */
+.qty-row{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:14px}
+.round-btn{width:46px;height:46px;border-radius:50%;border:none;background:#dbeafe;color:#1D4ED8;font-size:1.6rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.qty-input{font-family:‘Baloo 2’,cursive;font-size:2rem;font-weight:800;color:#3D2314;width:110px;text-align:center;border:2px solid #e0cbb0;border-radius:14px;padding:8px 4px;outline:none;background:white}
+.unit-row{display:flex;gap:8px;justify-content:center;margin-bottom:18px;flex-wrap:wrap}
+.chip{padding:7px 18px;border-radius:20px;border:2px solid #e0cbb0;background:white;color:#8B5E3C;font-weight:700;font-size:.85rem;cursor:pointer;transition:all .15s}
+.section-lbl{font-family:‘Baloo 2’,cursive;font-weight:700;text-align:center;margin-bottom:10px;color:#3D2314}
+.modal-hr{border:none;border-top:2px dashed #e0cbb0;margin:0 0 16px}
+.modal-actions{display:flex;gap:10px}
+.btn-cancel{flex:1;padding:14px;border-radius:14px;border:2px solid #e0cbb0;background:white;color:#8B5E3C;font-family:‘Baloo 2’,cursive;font-size:1rem;font-weight:600;cursor:pointer}
+.btn-confirm{flex:2;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#E8735A,#D45A40);color:white;font-family:‘Baloo 2’,cursive;font-size:1rem;font-weight:700;cursor:pointer}
+.btn-confirm-blue{flex:2;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#2563EB,#1D4ED8);color:white;font-family:‘Baloo 2’,cursive;font-size:1rem;font-weight:700;cursor:pointer}
+.time-input{padding:10px 18px;border-radius:12px;border:2px solid #e0cbb0;font-family:‘Baloo 2’,cursive;font-size:1.6rem;font-weight:800;color:#3D2314;outline:none;background:white}
+.heure-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px}
+
+/* Toast */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#3D2314;color:white;padding:10px 22px;border-radius:20px;font-size:.9rem;font-weight:600;transition:transform .35s cubic-bezier(.34,1.56,.64,1);z-index:300;white-space:nowrap}
+#toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+
+</head>
+<body>
+
+<!-- Dog name -->
+
+<div class="dog-name-wrap">
+  <span style="font-size:2.2rem">🐶</span>
+  <input id="dogNameInput" type="text" placeholder="Nom du chien" maxlength="20">
+</div>
+<div class="sync-status" id="syncStatus"></div>
+
+<!-- Tabs -->
+
+<div class="tabs">
+  <button class="tab active" id="tabJournal" onclick="switchTab('journal')">📋 Journal</button>
+  <button class="tab" id="tabNotes" onclick="switchTab('notes')">📝 Notes</button>
+</div>
+
+<!-- ═══ JOURNAL TAB ═══ -->
+
+<div id="journalTab">
+  <div class="actions">
+    <button class="btn-action btn-pipi" onclick="addEntry('pipi')">
+      <span class="icon">💧</span>Pipi
+    </button>
+    <button class="btn-action btn-caca" onclick="addEntry('caca')">
+      <span class="icon">💩</span>Caca
+    </button>
+    <button class="btn-action btn-manger" onclick="openFoodModal(null)">
+      <span class="icon">🍖</span>Manger
+    </button>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card"><div class="count" id="cPipi" style="color:#E8A820">0</div><div class="label">💧 Pipi</div></div>
+    <div class="stat-card"><div class="count" id="cCaca" style="color:#7B4F2E">0</div><div class="label">💩 Caca</div></div>
+    <div class="stat-card"><div class="count" id="cManger" style="color:#E8735A">0</div><div class="label">🍖 Repas</div></div>
+  </div>
+
+  <div class="day-nav">
+    <button class="day-nav-btn" id="btnPrev" onclick="changeDay(-1)">‹</button>
+    <div class="day-nav-label" id="dayLabel">Aujourd'hui<span class="day-nav-sub" id="daySub"></span></div>
+    <button class="day-nav-btn" id="btnNext" onclick="changeDay(1)" disabled>›</button>
+    <button class="btn-del-day" id="btnDelDay" onclick="deleteDay()" style="visibility:hidden">🗑️</button>
+  </div>
+
+  <div class="section-title">Historique <span id="logCount" style="font-size:.8rem;color:#8B5E3C;font-family:'Nunito';font-weight:400"></span></div>
+  <div class="log-list" id="logList"></div>
+</div>
+
+<!-- ═══ NOTES TAB ═══ -->
+
+<div id="notesTab" style="display:none">
+  <div class="day-nav">
+    <button class="day-nav-btn" onclick="changeDay(-1)">‹</button>
+    <div class="day-nav-label" id="noteDayLabel">Aujourd'hui</div>
+    <button class="day-nav-btn" id="notesBtnNext" onclick="changeDay(1)" disabled>›</button>
+  </div>
+
+  <div class="note-input-row">
+    <textarea id="noteInput" rows="2" placeholder="Écrire une note... (Entrée pour valider)"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();addNote()}"></textarea>
+    <button class="btn-add-note" onclick="addNote()">+</button>
+  </div>
+  <div class="log-list" id="noteList"></div>
+  <div class="note-hint">Visible par les deux · synchro automatique</div>
+</div>
+
+<!-- ═══ FOOD MODAL ═══ -->
+
+<div class="modal-overlay" id="foodModal" onclick="if(event.target===this)closeFoodModal()">
+  <div class="modal-box">
+    <div class="modal-title" id="foodModalTitle">🍖 Repas</div>
+    <div class="modal-sub">Entrez les quantités données</div>
+
+```
+<div class="heure-row">
+  <span style="font-size:.85rem;color:#8B5E3C;font-weight:700">🕐 Heure :</span>
+  <input type="time" id="foodTime" style="padding:6px 12px;border-radius:10px;border:2px solid #e0cbb0;font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:700;color:#3D2314;outline:none;background:white">
+</div>
+
+<div class="section-lbl">🥣 Repas</div>
+<div class="qty-row">
+  <button class="round-btn" onclick="adj('foodQty',-10)">−</button>
+  <input class="qty-input" type="number" id="foodQty" value="100" min="0">
+  <button class="round-btn" onclick="adj('foodQty',10)">+</button>
+</div>
+<div class="unit-row" id="unitRow1">
+  <button class="chip" onclick="selUnit(this,'food')" data-u="g">g</button>
+  <button class="chip" onclick="selUnit(this,'food')" data-u="ml">ml</button>
+  <button class="chip" onclick="selUnit(this,'food')" data-u="tasse">tasse</button>
+  <button class="chip" onclick="selUnit(this,'food')" data-u="portion">portion</button>
+</div>
+
+<hr class="modal-hr">
+
+<div class="section-lbl">🎾 Croquettes jeu</div>
+<div class="qty-row">
+  <button class="round-btn" onclick="adj('foodQtyJeu',-5)">−</button>
+  <input class="qty-input" type="number" id="foodQtyJeu" value="0" min="0">
+  <button class="round-btn" onclick="adj('foodQtyJeu',5)">+</button>
+</div>
+<div class="unit-row" id="unitRow2">
+  <button class="chip" onclick="selUnit(this,'jeu')" data-u="g">g</button>
+  <button class="chip" onclick="selUnit(this,'jeu')" data-u="pièces">pièces</button>
+  <button class="chip" onclick="selUnit(this,'jeu')" data-u="portion">portion</button>
+</div>
+
+<div class="modal-actions">
+  <button class="btn-cancel" onclick="closeFoodModal()">Annuler</button>
+  <button class="btn-confirm" id="foodConfirmBtn" onclick="confirmFood()">✓ Enregistrer</button>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ═══ TIME MODAL ═══ -->
+
+<div class="time-modal-overlay" id="timeModal" onclick="if(event.target===this)closeTimeModal()">
+  <div class="time-modal-box">
+    <div class="modal-title" style="margin-bottom:20px" id="timeModalTitle">🕐 Modifier l'heure</div>
+    <div style="display:flex;justify-content:center;margin-bottom:24px">
+      <input type="time" id="timeInput" class="time-input">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeTimeModal()">Annuler</button>
+      <button class="btn-confirm-blue" onclick="confirmTime()">✓ OK</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── Config Firebase ───────────────────────────────────────────
+// 🔧 REMPLACEZ CES VALEURS par votre projet Firebase
+const FB_URL = "https://milo-2ab09-default-rtdb.firebaseio.com";
+// ─────────────────────────────────────────────────────────────
+
+const TYPES = {
+  pipi:   {label:"Pipi",  icon:"💧", bg:"#FFF5D6", color:"#E8A820"},
+  caca:   {label:"Caca",  icon:"💩", bg:"#F5EBE0", color:"#7B4F2E"},
+  manger: {label:"Repas", icon:"🍖", bg:"#FDEEE9", color:"#E8735A"},
+};
+
+let entries = [];
+let notes   = [];
+let dogName = localStorage.getItem("dogName") || "Mon chien";
+let viewOffset = 0;
+let currentTab = "journal";
+let foodUnit = "g", foodUnitJeu = "g";
+let editingId = null;
+let timeEditId = null;
+let syncTimer = null;
+
+// ── Helpers ───────────────────────────────────────────────────
+function getViewDate() {
+  const d = new Date();
+  d.setDate(d.getDate() + viewOffset);
+  d.setHours(0,0,0,0);
+  return d;
+}
+function isToday(d)     { return d.toDateString()===new Date().toDateString(); }
+function isYesterday(d) { const y=new Date(); y.setDate(y.getDate()-1); return d.toDateString()===y.toDateString(); }
+function dayLabel(d)    {
+  if(isToday(d))     return "Aujourd'hui";
+  if(isYesterday(d)) return "Hier";
+  return d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+}
+function daySub(d) {
+  if(isToday(d)) return d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+  return "";
+}
+function fmtTime(ts)  { return new Date(ts).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}); }
+function timeAgo(ts)  {
+  const m=Math.floor((Date.now()-ts)/60000);
+  if(m<1)  return "À l'instant";
+  if(m<60) return `il y a ${m} min`;
+  const h=Math.floor(m/60);
+  if(h<24) return `il y a ${h}h${m%60>0?(m%60)+"min":""}`;
+  return `il y a ${Math.floor(h/24)}j`;
+}
+function toTimeVal(ts) {
+  const d=new Date(ts);
+  return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+}
+function applyTime(ts,str) {
+  const [h,m]=str.split(":").map(Number);
+  const d=new Date(ts); d.setHours(h,m,0,0); return d.getTime();
+}
+function noteKey(d) { return d.toISOString().slice(0,10); }
+
+// ── Firebase sync ─────────────────────────────────────────────
+async function fbGet(path) {
+  try {
+    const r = await fetch(`${FB_URL}/${path}.json`);
+    return await r.json();
+  } catch { return null; }
+}
+async function fbSet(path, data) {
+  try {
+    await fetch(`${FB_URL}/${path}.json`, {
+      method:"PUT", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify(data)
+    });
+  } catch {}
+}
+
+async function syncEntries(newEntries) {
+  entries = newEntries;
+  localStorage.setItem("entries", JSON.stringify(entries));
+  localStorage.setItem("dogName", dogName);
+  await fbSet("entries", {entries, dogName});
+  setSyncStatus("✓ Synchro "+new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}));
+  render();
+}
+
+async function loadEntries() {
+  // Local first
+  const local = localStorage.getItem("entries");
+  if (local) { const d=JSON.parse(local); entries=d; dogName=localStorage.getItem("dogName")||dogName; render(); }
+  // Remote
+  const remote = await fbGet("entries");
+  if (remote?.entries) {
+    entries = remote.entries;
+    if (remote.dogName) dogName = remote.dogName;
+    localStorage.setItem("entries", JSON.stringify(entries));
+    localStorage.setItem("dogName", dogName);
+    setSyncStatus("✓ Synchro "+new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}));
+    render();
+  }
+}
+
+async function syncNotes(list, d) {
+  notes = list;
+  const k = noteKey(d);
+  localStorage.setItem("notes_"+k, JSON.stringify(list));
+  await fbSet("notes/"+k, list);
+  setSyncStatus("✓ Synchro "+new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}));
+  renderNotes();
+}
+
+async function loadNotes(d) {
+  notes = [];
+  const k = noteKey(d);
+  const local = localStorage.getItem("notes_"+k);
+  if (local) { notes=JSON.parse(local); renderNotes(); }
+  const remote = await fbGet("notes/"+k);
+  if (remote && Array.isArray(remote)) {
+    notes = remote;
+    localStorage.setItem("notes_"+k, JSON.stringify(notes));
+    renderNotes();
+  }
+}
+
+function setSyncStatus(msg) { document.getElementById("syncStatus").textContent = msg; }
+
+// ── Init ──────────────────────────────────────────────────────
+document.getElementById("dogNameInput").value = dogName;
+document.getElementById("dogNameInput").addEventListener("input", e => {
+  dogName = e.target.value;
+  localStorage.setItem("dogName", dogName);
+  syncEntries(entries);
+});
+
+loadEntries();
+setInterval(loadEntries, 10000);
+
+// ── Tabs ──────────────────────────────────────────────────────
+function switchTab(t) {
+  currentTab = t;
+  document.getElementById("journalTab").style.display = t==="journal" ? "block" : "none";
+  document.getElementById("notesTab").style.display   = t==="notes"   ? "block" : "none";
+  document.getElementById("tabJournal").className = "tab"+(t==="journal"?" active":"");
+  document.getElementById("tabNotes").className   = "tab"+(t==="notes"  ?" active":"");
+  if (t==="notes") loadNotes(getViewDate());
+  renderDayNav();
+}
+
+// ── Day nav ───────────────────────────────────────────────────
+function changeDay(d) {
+  if (viewOffset+d > 0) return;
+  viewOffset += d;
+  renderDayNav();
+  if (currentTab==="journal") render();
+  else { notes=[]; renderNotes(); loadNotes(getViewDate()); }
+}
+
+function renderDayNav() {
+  const vd = getViewDate();
+  const lbl = dayLabel(vd);
+  const sub = daySub(vd);
+
+  // Journal nav
+  const jl = document.getElementById("dayLabel");
+  if (jl) { jl.innerHTML = lbl + (sub ? `<span class="day-nav-sub">${sub}</span>` : ""); }
+  const btnNext = document.getElementById("btnNext");
+  if (btnNext) btnNext.disabled = viewOffset >= 0;
+  const btnDelDay = document.getElementById("btnDelDay");
+  if (btnDelDay) btnDelDay.style.visibility = viewOffset < 0 ? "visible" : "hidden";
+
+  // Notes nav
+  const nl = document.getElementById("noteDayLabel");
+  if (nl) nl.textContent = lbl;
+  const nbn = document.getElementById("notesBtnNext");
+  if (nbn) nbn.disabled = viewOffset >= 0;
+}
+
+// ── Entries ───────────────────────────────────────────────────
+function addEntry(type, extra={}) {
+  const e = {id:Date.now(), type, ts:Date.now(), ...extra};
+  syncEntries([e, ...entries]);
+  showToast(TYPES[type].icon+" "+TYPES[type].label+" enregistré !");
+  viewOffset = 0;
+  renderDayNav();
+}
+
+function deleteEntry(id) {
+  syncEntries(entries.filter(e=>e.id!==id));
+}
+
+function updateEntry(id, fields) {
+  syncEntries(entries.map(e=>e.id===id?{...e,...fields}:e));
+  showToast("✏️ Modifié !");
+}
+
+function deleteDay() {
+  const vd = getViewDate();
+  if (isToday(vd)) return;
+  if (!confirm(`Supprimer tous les événements de "${dayLabel(vd)}" ?`)) return;
+  syncEntries(entries.filter(e=>new Date(e.ts).toDateString()!==vd.toDateString()));
+}
+
+// ── Food modal ────────────────────────────────────────────────
+function adj(id, d) {
+  const el = document.getElementById(id);
+  el.value = Math.max(0, (parseInt(el.value)||0)+d);
+}
+function selUnit(btn, type) {
+  const row = type==="food" ? "unitRow1" : "unitRow2";
+  document.querySelectorAll("#"+row+" .chip").forEach(c=>c.style.cssText="");
+  btn.style.background = type==="food" ? "#E8735A" : "#6BBF6B";
+  btn.style.borderColor = type==="food" ? "#E8735A" : "#6BBF6B";
+  btn.style.color = "white";
+  if (type==="food") foodUnit=btn.dataset.u; else foodUnitJeu=btn.dataset.u;
+}
+function setActiveChip(rowId, val, color) {
+  document.querySelectorAll("#"+rowId+" .chip").forEach(c => {
+    if (c.dataset.u===val) { c.style.background=color; c.style.borderColor=color; c.style.color="white"; }
+    else { c.style.background="white"; c.style.borderColor="#e0cbb0"; c.style.color="#8B5E3C"; }
+  });
+}
+
+function openFoodModal(entry) {
+  editingId = entry ? entry.id : null;
+  document.getElementById("foodModalTitle").textContent = entry ? "✏️ Modifier le repas" : "🍖 Repas";
+  document.getElementById("foodConfirmBtn").textContent = entry ? "✓ Mettre à jour" : "✓ Enregistrer";
+  document.getElementById("foodQty").value    = entry?.qty    ?? 100;
+  document.getElementById("foodQtyJeu").value = entry?.qtyJeu ?? 0;
+  document.getElementById("foodTime").value   = entry?.ts ? toTimeVal(entry.ts) : toTimeVal(Date.now());
+  foodUnit    = entry?.unit    ?? "g";
+  foodUnitJeu = entry?.unitJeu ?? "g";
+  setActiveChip("unitRow1", foodUnit,    "#E8735A");
+  setActiveChip("unitRow2", foodUnitJeu, "#6BBF6B");
+  document.getElementById("foodModal").classList.add("open");
+}
+function closeFoodModal() { document.getElementById("foodModal").classList.remove("open"); }
+function confirmFood() {
+  const qty    = parseInt(document.getElementById("foodQty").value)||0;
+  const qtyJeu = parseInt(document.getElementById("foodQtyJeu").value)||0;
+  const timeStr = document.getElementById("foodTime").value;
+  closeFoodModal();
+  if (editingId) {
+    const orig = entries.find(e=>e.id===editingId);
+    const ts = timeStr ? applyTime(orig.ts, timeStr) : orig.ts;
+    updateEntry(editingId, { qty, unit:foodUnit, ts,
+      qtyJeu: qtyJeu>0?qtyJeu:undefined, unitJeu: qtyJeu>0?foodUnitJeu:undefined });
+  } else {
+    const ts = timeStr ? applyTime(Date.now(), timeStr) : Date.now();
+    addEntry("manger", { qty, unit:foodUnit, ts, ...(qtyJeu>0?{qtyJeu,unitJeu:foodUnitJeu}:{}) });
+  }
+}
+
+// ── Time modal ────────────────────────────────────────────────
+function openTimeModal(entry) {
+  timeEditId = entry.id;
+  document.getElementById("timeModalTitle").textContent = TYPES[entry.type].icon+" Modifier l'heure";
+  document.getElementById("timeInput").value = toTimeVal(entry.ts);
+  document.getElementById("timeModal").classList.add("open");
+}
+function closeTimeModal() { document.getElementById("timeModal").classList.remove("open"); }
+function confirmTime() {
+  const str = document.getElementById("timeInput").value;
+  const orig = entries.find(e=>e.id===timeEditId);
+  if (orig && str) updateEntry(timeEditId, {ts: applyTime(orig.ts, str)});
+  closeTimeModal();
+}
+
+// ── Notes ─────────────────────────────────────────────────────
+function addNote() {
+  const el = document.getElementById("noteInput");
+  const text = el.value.trim();
+  if (!text) return;
+  el.value = "";
+  const d = getViewDate();
+  const list = [...notes, {id:Date.now(), text, ts:Date.now()}];
+  syncNotes(list, d);
+}
+function deleteNote(id) {
+  const d = getViewDate();
+  syncNotes(notes.filter(n=>n.id!==id), d);
+}
+
+// ── Render ────────────────────────────────────────────────────
+function render() {
+  document.getElementById("dogNameInput").value = dogName;
+  const vd = getViewDate();
+  const day = entries.filter(e=>new Date(e.ts).toDateString()===vd.toDateString());
+  document.getElementById("cPipi").textContent   = day.filter(e=>e.type==="pipi").length;
+  document.getElementById("cCaca").textContent   = day.filter(e=>e.type==="caca").length;
+  document.getElementById("cManger").textContent = day.filter(e=>e.type==="manger").length;
+  document.getElementById("logCount").textContent = day.length>0?`(${day.length})`:"";
+  renderDayNav();
+
+  const sorted = [...day].sort((a,b)=>b.ts-a.ts);
+  const list = document.getElementById("logList");
+  if (sorted.length===0) {
+    list.innerHTML='<div class="empty"><span class="paw">🐾</span>Aucun événement ce jour-là.</div>';
+    return;
+  }
+  list.innerHTML = sorted.map(e => {
+    const t = TYPES[e.type];
+    const qty = e.type==="manger"&&e.qty!==undefined
+      ? `<span class="log-qty">${e.qty} ${e.unit}${e.qtyJeu?` · 🎾 ${e.qtyJeu} ${e.unitJeu}`:""}</span>` : "";
+    const ago = isToday(vd) ? ` · <span class="log-ago">${timeAgo(e.ts)}</span>` : "";
+    const editBtn = e.type==="manger"
+      ? `<button class="btn-icon" style="color:#93C5FD" onclick='openFoodModal(${JSON.stringify(e)})'>✏️</button>`
+      : `<button class="btn-icon" style="color:#93C5FD" onclick='openTimeModal(${JSON.stringify(e)})'>🕐</button>`;
+    return `<div class="log-item">
+      <div class="log-icon" style="background:${t.bg}">${t.icon}</div>
+      <div class="log-info">
+        <div class="log-type">${t.label}${qty}</div>
+        <div class="log-time">${fmtTime(e.ts)}${ago}</div>
+      </div>
+      ${editBtn}
+      <button class="btn-icon" style="color:#d4b09a" onclick="deleteEntry(${e.id})">✕</button>
+    </div>`;
+  }).join("");
+}
+
+function renderNotes() {
+  const list = document.getElementById("noteList");
+  if (notes.length===0) {
+    list.innerHTML='<div class="empty"><span class="paw">📝</span>Aucune note ce jour-là.</div>';
+    return;
+  }
+  list.innerHTML = notes.map(n => `
+    <div class="note-card">
+      <div style="flex:1">
+        <div class="note-text">${n.text.replace(/</g,"&lt;")}</div>
+        <div class="note-time">${fmtTime(n.ts)}</div>
+      </div>
+      <button class="btn-icon" style="color:#d4b09a" onclick="deleteNote(${n.id})">✕</button>
+    </div>`).join("");
+}
+
+// ── Toast ─────────────────────────────────────────────────────
+let toastT;
+function showToast(msg) {
+  const t=document.getElementById("toast");
+  t.textContent=msg; t.classList.add("show");
+  clearTimeout(toastT);
+  toastT=setTimeout(()=>t.classList.remove("show"),2000);
+}
+
+renderDayNav();
+render();
+renderNotes();
+</script>
+
+</body>
+</html>
