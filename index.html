@@ -9,35 +9,29 @@
 <meta name="apple-mobile-web-app-title" content="🐾 Milo">
 <title>🐾 Carnet de Pipi</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
-
-const firebaseConfig = {
-apiKey: “AIzaSyDBj-lEcAx4QbD0g_7oQTu1Cpp_2H0Le20”,
-authDomain: “milo-2ab09.firebaseapp.com”,
-databaseURL: “https://milo-2ab09-default-rtdb.europe-west1.firebasedatabase.app”,
-storageBucket: “milo-2ab09.firebasestorage.app”,
-messagingSenderId: “577785359632”,
-appId: “1:577785359632:web:25a3d304a311282731c995”,
-measurementId: “G-RY9H94J855”,
-projectId: “milo-2ab09”,
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-window.fbRef = (path) => ref(db, path);
-window.fbSet = (path, data) => set(ref(db, path), data);
-window.fbGet = async (path) => {
-const snap = await get(ref(db, path));
-return snap.exists() ? snap.val() : null;
-};
-window.fbListen = (path, cb) => onValue(ref(db, path), snap => cb(snap.exists() ? snap.val() : null));
-window.firebaseReady = true;
-window.dispatchEvent(new Event(“firebaseReady”));
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDBj-lEcAx4QbD0g_7oQTu1Cpp_2H0Le20",
+    authDomain: "milo-2ab09.firebaseapp.com",
+    databaseURL: "https://milo-2ab09-default-rtdb.europe-west1.firebasedatabase.app",
+    storageBucket: "milo-2ab09.firebasestorage.app",
+    messagingSenderId: "577785359632",
+    appId: "1:577785359632:web:25a3d304a311282731c995",
+    projectId: "milo-2ab09"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  window.fbSet = (path, data) => db.ref(path).set(data);
+  window.fbGet = async (path) => {
+    const snap = await db.ref(path).once('value');
+    return snap.exists() ? snap.val() : null;
+  };
+  window.fbListen = (path, cb) => db.ref(path).on('value', snap => cb(snap.exists() ? snap.val() : null));
+  window.firebaseReady = true;
+  window.dispatchEvent(new Event('firebaseReady'));
 </script>
-
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:'Nunito',sans-serif;background:#EEF6FF;min-height:100vh;padding:20px 16px 100px;background-image:radial-gradient(circle at 10% 20%,rgba(100,180,255,0.1) 0%,transparent 50%),radial-gradient(circle at 90% 80%,rgba(60,140,255,0.07) 0%,transparent 50%)}
@@ -111,7 +105,6 @@ input,textarea,button{font-family:'Nunito',sans-serif}
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#3D2314;color:white;padding:10px 22px;border-radius:20px;font-size:.9rem;font-weight:600;transition:transform .35s cubic-bezier(.34,1.56,.64,1);z-index:300;white-space:nowrap}
 #toast.show{transform:translateX(-50%) translateY(0)}
 </style>
-
 </head>
 <body>
 
