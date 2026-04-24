@@ -9,37 +9,13 @@
 <meta name="apple-mobile-web-app-title" content="🐾 Milo">
 <title>🐾 Carnet de Pipi</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDBj-lEcAx4QbD0g_7oQTu1Cpp_2H0Le20",
-    authDomain: "milo-2ab09.firebaseapp.com",
-    databaseURL: "https://milo-2ab09-default-rtdb.europe-west1.firebasedatabase.app",
-    storageBucket: "milo-2ab09.firebasestorage.app",
-    messagingSenderId: "577785359632",
-    appId: "1:577785359632:web:25a3d304a311282731c995",
-    projectId: "milo-2ab09"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-  window.fbSet = (path, data) => db.ref(path).set(data);
-  window.fbGet = async (path) => {
-    const snap = await db.ref(path).once('value');
-    return snap.exists() ? snap.val() : null;
-  };
-  window.fbListen = (path, cb) => db.ref(path).on('value', snap => cb(snap.exists() ? snap.val() : null));
-  window.firebaseReady = true;
-  window.dispatchEvent(new Event('firebaseReady'));
-</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:'Nunito',sans-serif;background:#EEF6FF;min-height:100vh;padding:20px 16px 100px;background-image:radial-gradient(circle at 10% 20%,rgba(100,180,255,0.1) 0%,transparent 50%),radial-gradient(circle at 90% 80%,rgba(60,140,255,0.07) 0%,transparent 50%)}
 input,textarea,button{font-family:'Nunito',sans-serif}
-.dog-name-wrap{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px;margin-top:8px}
+.dog-name-wrap{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px;margin-top:8px}
 #dogNameInput{font-family:'Baloo 2',cursive;font-size:1.8rem;font-weight:800;color:#2563EB;background:transparent;border:none;border-bottom:3px solid #60A5FA;outline:none;text-align:center;width:200px;padding:2px 4px}
 #dogNameInput::placeholder{color:#93C5FD}
-.sync-status{text-align:center;margin-bottom:16px;font-size:.75rem;color:#93C5FD;min-height:18px}
 .tabs{display:flex;background:white;border-radius:14px;padding:4px;gap:4px;margin-bottom:24px;box-shadow:0 2px 10px rgba(61,35,20,0.1)}
 .tab{flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;font-family:'Baloo 2',cursive;font-weight:700;font-size:.95rem;background:transparent;color:#8B5E3C;transition:all .2s}
 .tab.active{background:#2563EB;color:white}
@@ -79,7 +55,6 @@ input,textarea,button{font-family:'Nunito',sans-serif}
 .note-card{background:#FFFDE7;border-radius:14px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;box-shadow:0 2px 8px rgba(61,35,20,0.08);border-left:4px solid #FBC02D;animation:slideIn .3s ease}
 .note-text{font-size:.95rem;color:#3D2314;line-height:1.5;white-space:pre-wrap;flex:1}
 .note-time{font-size:.72rem;color:#b89a80;margin-top:4px}
-.note-hint{font-size:.75rem;color:#93C5FD;text-align:right;margin-top:10px}
 .modal-overlay{position:fixed;inset:0;background:rgba(61,35,20,0.45);display:flex;align-items:flex-end;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity .25s}
 .modal-overlay.open{opacity:1;pointer-events:all}
 .modal-box{background:#EEF6FF;border-radius:24px 24px 0 0;padding:28px 24px 44px;width:100%;max-width:480px;transform:translateY(100%);transition:transform .3s cubic-bezier(.34,1.2,.64,1);box-shadow:0 -8px 40px rgba(61,35,20,0.2);overflow-y:auto;max-height:92vh}
@@ -88,12 +63,12 @@ input,textarea,button{font-family:'Nunito',sans-serif}
 .modal-sub{text-align:center;color:#8B5E3C;font-size:.85rem;margin-bottom:18px}
 .time-modal-overlay{position:fixed;inset:0;background:rgba(61,35,20,0.45);display:flex;align-items:center;justify-content:center;z-index:200;padding:24px;opacity:0;pointer-events:none;transition:opacity .25s}
 .time-modal-overlay.open{opacity:1;pointer-events:all}
-.time-modal-box{background:#EEF6FF;border-radius:24px;padding:28px 24px;width:100%;max-width:320px;box-shadow:0 8px 40px rgba(61,35,20,0.2)}
+.time-modal-box{background:#EEF6FF;border-radius:24px;padding:28px 24px;width:100%;max-width:360px;box-shadow:0 8px 40px rgba(61,35,20,0.2)}
 .qty-row{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:14px}
 .round-btn{width:46px;height:46px;border-radius:50%;border:none;background:#dbeafe;color:#1D4ED8;font-size:1.6rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .qty-input{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:#3D2314;width:110px;text-align:center;border:2px solid #e0cbb0;border-radius:14px;padding:8px 4px;outline:none;background:white}
 .unit-row{display:flex;gap:8px;justify-content:center;margin-bottom:18px;flex-wrap:wrap}
-.chip{padding:7px 18px;border-radius:20px;border:2px solid #e0cbb0;background:white;color:#8B5E3C;font-weight:700;font-size:.85rem;cursor:pointer;transition:all .15s}
+.chip{padding:7px 18px;border-radius:20px;border:2px solid #e0cbb0;background:white;color:#8B5E3C;font-weight:700;font-size:.85rem;cursor:pointer}
 .section-lbl{font-family:'Baloo 2',cursive;font-weight:700;text-align:center;margin-bottom:10px;color:#3D2314}
 .modal-hr{border:none;border-top:2px dashed #e0cbb0;margin:0 0 16px}
 .modal-actions{display:flex;gap:10px}
@@ -112,7 +87,6 @@ input,textarea,button{font-family:'Nunito',sans-serif}
   <span style="font-size:2.2rem">🐶</span>
   <input id="dogNameInput" type="text" placeholder="Nom du chien" maxlength="20">
 </div>
-<div class="sync-status" id="syncStatus">Connexion...</div>
 
 <div class="tabs">
   <button class="tab active" id="tabJournal" onclick="switchTab('journal')">📋 Journal</button>
@@ -138,6 +112,9 @@ input,textarea,button{font-family:'Nunito',sans-serif}
   </div>
   <div class="section-title">Historique <span id="logCount" style="font-size:.8rem;color:#8B5E3C;font-family:'Nunito';font-weight:400"></span></div>
   <div class="log-list" id="logList"></div>
+  <button onclick="showSummary()" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:20px;padding:14px;border-radius:14px;border:2px solid #bfdbfe;background:white;color:#2563EB;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;cursor:pointer">
+    📋 Résumé
+  </button>
 </div>
 
 <div id="notesTab" style="display:none">
@@ -152,8 +129,9 @@ input,textarea,button{font-family:'Nunito',sans-serif}
     <button class="btn-add-note" onclick="addNote()">+</button>
   </div>
   <div class="log-list" id="noteList"></div>
-  <div class="note-hint">Visible par les deux · synchro automatique</div>
 </div>
+
+<!-- Food modal -->
 
 <div class="modal-overlay" id="foodModal" onclick="if(event.target===this)closeFoodModal()">
   <div class="modal-box">
@@ -194,6 +172,8 @@ input,textarea,button{font-family:'Nunito',sans-serif}
   </div>
 </div>
 
+<!-- Time modal -->
+
 <div class="time-modal-overlay" id="timeModal" onclick="if(event.target===this)closeTimeModal()">
   <div class="time-modal-box">
     <div class="modal-title" style="margin-bottom:20px" id="timeModalTitle">🕐 Modifier l'heure</div>
@@ -207,6 +187,18 @@ input,textarea,button{font-family:'Nunito',sans-serif}
   </div>
 </div>
 
+<!-- Summary modal -->
+
+<div class="time-modal-overlay" id="summaryModal" onclick="if(event.target===this)document.getElementById('summaryModal').classList.remove('open')">
+  <div class="time-modal-box">
+    <div class="modal-title" style="margin-bottom:14px">📋 Résumé</div>
+    <textarea id="summaryText" readonly rows="9"
+      style="width:100%;padding:12px;border-radius:12px;border:2px solid #bfdbfe;background:white;font-size:0.88rem;color:#3D2314;outline:none;resize:none;line-height:1.7"></textarea>
+    <p style="font-size:0.75rem;color:#93C5FD;text-align:center;margin:10px 0 14px">Appuyez longuement pour sélectionner et copier</p>
+    <button onclick="document.getElementById('summaryModal').classList.remove('open')" style="width:100%;padding:12px;border-radius:12px;border:2px solid #e0cbb0;background:white;color:#8B5E3C;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;cursor:pointer">Fermer</button>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -216,35 +208,32 @@ const TYPES = {
   manger: {label:"Repas", icon:"🍖", bg:"#FDEEE9", color:"#E8735A"},
 };
 
-let entries = JSON.parse(localStorage.getItem("entries")||"[]");
-let notes = [];
-let dogName = localStorage.getItem("dogName") || "Milo";
-let viewOffset = 0;
-let currentTab = "journal";
+let entries  = JSON.parse(localStorage.getItem("entries")  || "[]");
+let dogName  = localStorage.getItem("dogName") || "Milo";
+let viewOffset = 0, currentTab = "journal";
 let foodUnit = "g", foodUnitJeu = "g";
 let editingId = null, timeEditId = null;
 
+// Dog name
 document.getElementById("dogNameInput").value = dogName;
 document.getElementById("dogNameInput").addEventListener("input", e => {
   dogName = e.target.value;
   localStorage.setItem("dogName", dogName);
-  if(window.firebaseReady) window.fbSet("data/dogName", dogName);
 });
 
+// ── Helpers ───────────────────────────────────────────────────
 function getViewDate() {
   const d = new Date(); d.setDate(d.getDate()+viewOffset); d.setHours(0,0,0,0); return d;
 }
 function isToday(d)     { return d.toDateString()===new Date().toDateString(); }
 function isYesterday(d) { const y=new Date(); y.setDate(y.getDate()-1); return d.toDateString()===y.toDateString(); }
 function dayLabel(d) {
-  if(isToday(d)) return "Aujourd'hui";
+  if(isToday(d))     return "Aujourd'hui";
   if(isYesterday(d)) return "Hier";
   return d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
 }
-function daySub(d) {
-  return isToday(d) ? d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}) : "";
-}
-function fmtTime(ts) { return new Date(ts).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}); }
+function daySub(d) { return isToday(d)?d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}):""; }
+function fmtTime(ts) { return new Date(ts).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}).replace(":",  "h"); }
 function timeAgo(ts) {
   const m=Math.floor((Date.now()-ts)/60000);
   if(m<1) return "À l'instant";
@@ -263,93 +252,51 @@ function applyTime(ts,str) {
 }
 function noteKey(d) { return "notes_"+d.toISOString().slice(0,10); }
 
-function setSyncStatus(msg) { document.getElementById("syncStatus").textContent = msg; }
-
-// Init Firebase listener
-window.addEventListener("firebaseReady", () => {
-  // Listen to entries
-  window.fbListen("data", val => {
-    if (!val) return;
-    if (val.entries) {
-      entries = val.entries;
-      localStorage.setItem("entries", JSON.stringify(entries));
-    }
-    if (val.dogName) {
-      dogName = val.dogName;
-      localStorage.setItem("dogName", dogName);
-      document.getElementById("dogNameInput").value = dogName;
-    }
-    setSyncStatus("✓ Synchro "+new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}));
-    render();
-  });
-
-  // Listen to current day notes
-  listenNotes(getViewDate());
-  setSyncStatus("✓ Connecté");
-});
-
-function listenNotes(d) {
-  if (!window.firebaseReady) return;
-  window.fbListen(noteKey(d), val => {
-    notes = val && Array.isArray(val) ? val : [];
-    renderNotes();
-  });
+function save() { localStorage.setItem("entries", JSON.stringify(entries)); }
+function saveNotes(list, d) { localStorage.setItem(noteKey(d), JSON.stringify(list)); }
+function loadNotes(d) {
+  const s = localStorage.getItem(noteKey(d));
+  return s ? JSON.parse(s) : [];
 }
 
-async function saveEntries() {
-  localStorage.setItem("entries", JSON.stringify(entries));
-  if (window.firebaseReady) {
-    await window.fbSet("data", {entries, dogName});
-    setSyncStatus("✓ Synchro "+new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}));
-  }
-  render();
-}
-
-async function saveNotes(list, d) {
-  notes = list;
-  localStorage.setItem(noteKey(d), JSON.stringify(list));
-  if (window.firebaseReady) await window.fbSet(noteKey(d), list);
-  renderNotes();
-}
-
+// ── Entries ───────────────────────────────────────────────────
 function addEntry(type, extra={}) {
-  const e = {id:Date.now(), type, ts:Date.now(), ...extra};
-  entries = [e, ...entries];
-  saveEntries();
+  entries = [{id:Date.now(), type, ts:Date.now(), ...extra}, ...entries];
+  save(); render();
   showToast(TYPES[type].icon+" "+TYPES[type].label+" enregistré !");
-  viewOffset = 0; renderDayNav();
+  viewOffset=0; renderDayNav();
 }
-function deleteEntry(id) { entries=entries.filter(e=>e.id!==id); saveEntries(); }
+function deleteEntry(id) { entries=entries.filter(e=>e.id!==id); save(); render(); }
 function updateEntry(id, fields) {
   entries=entries.map(e=>e.id===id?{...e,...fields}:e);
-  saveEntries(); showToast("✏️ Modifié !");
+  save(); render(); showToast("✏️ Modifié !");
 }
 function deleteDay() {
   const vd=getViewDate();
   if(isToday(vd)) return;
   if(!confirm(`Supprimer "${dayLabel(vd)}" ?`)) return;
   entries=entries.filter(e=>new Date(e.ts).toDateString()!==vd.toDateString());
-  saveEntries();
+  save(); render();
 }
 
+// ── Tabs ──────────────────────────────────────────────────────
 function switchTab(t) {
   currentTab=t;
   document.getElementById("journalTab").style.display=t==="journal"?"block":"none";
   document.getElementById("notesTab").style.display=t==="notes"?"block":"none";
   document.getElementById("tabJournal").className="tab"+(t==="journal"?" active":"");
   document.getElementById("tabNotes").className="tab"+(t==="notes"?" active":"");
-  if(t==="notes") listenNotes(getViewDate());
+  if(t==="notes") renderNotes();
   renderDayNav();
 }
 
+// ── Day nav ───────────────────────────────────────────────────
 function changeDay(d) {
   if(viewOffset+d>0) return;
   viewOffset+=d;
   renderDayNav();
-  if(currentTab==="journal") render();
-  else { notes=[]; renderNotes(); listenNotes(getViewDate()); }
+  if(currentTab==="journal") render(); else renderNotes();
 }
-
 function renderDayNav() {
   const vd=getViewDate(), lbl=dayLabel(vd), sub=daySub(vd);
   const jl=document.getElementById("dayLabel");
@@ -360,10 +307,11 @@ function renderDayNav() {
   const nbn=document.getElementById("notesBtnNext"); if(nbn) nbn.disabled=viewOffset>=0;
 }
 
-function adj(id,d) { const el=document.getElementById(id); el.value=Math.max(0,(parseInt(el.value)||0)+d); }
+// ── Food modal ────────────────────────────────────────────────
+function adj(id,d){const el=document.getElementById(id);el.value=Math.max(0,(parseInt(el.value)||0)+d);}
 function selUnit(btn,type) {
   const row=type==="food"?"unitRow1":"unitRow2";
-  document.querySelectorAll("#"+row+" .chip").forEach(c=>c.style.cssText="");
+  document.querySelectorAll("#"+row+" .chip").forEach(c=>{c.style.background="white";c.style.borderColor="#e0cbb0";c.style.color="#8B5E3C";});
   btn.style.background=type==="food"?"#E8735A":"#6BBF6B";
   btn.style.borderColor=type==="food"?"#E8735A":"#6BBF6B";
   btn.style.color="white";
@@ -402,6 +350,8 @@ function confirmFood() {
     addEntry("manger",{qty,unit:foodUnit,ts,...(qtyJeu>0?{qtyJeu,unitJeu:foodUnitJeu}:{})});
   }
 }
+
+// ── Time modal ────────────────────────────────────────────────
 function openTimeModal(entry) {
   timeEditId=entry.id;
   document.getElementById("timeModalTitle").textContent=TYPES[entry.type].icon+" Modifier l'heure";
@@ -416,17 +366,44 @@ function confirmTime() {
   closeTimeModal();
 }
 
+// ── Notes ─────────────────────────────────────────────────────
 function addNote() {
   const el=document.getElementById("noteInput");
   const text=el.value.trim(); if(!text) return;
   el.value="";
   const d=getViewDate();
-  saveNotes([...notes,{id:Date.now(),text,ts:Date.now()}],d);
+  const list=[...loadNotes(d),{id:Date.now(),text,ts:Date.now()}];
+  saveNotes(list,d); renderNotes();
 }
 function deleteNote(id) {
-  saveNotes(notes.filter(n=>n.id!==id),getViewDate());
+  const d=getViewDate();
+  saveNotes(loadNotes(d).filter(n=>n.id!==id),d); renderNotes();
 }
 
+// ── Summary ───────────────────────────────────────────────────
+function showSummary() {
+  const vd=getViewDate();
+  const day=entries.filter(e=>new Date(e.ts).toDateString()===vd.toDateString());
+  const sorted=[...day].sort((a,b)=>a.ts-b.ts);
+  const notes=loadNotes(vd);
+  let lines=[];
+  sorted.forEach(e=>{
+    if(e.type==="pipi")   lines.push(`Pipi: ${fmtTime(e.ts)}`);
+    if(e.type==="caca")   lines.push(`Caca: ${fmtTime(e.ts)}`);
+    if(e.type==="manger") {
+      let r=`Manger: ${fmtTime(e.ts)}`;
+      if(e.qty) r+=` ${e.qty}${e.unit||"g"}`;
+      if(e.qtyJeu) r+=` + ${e.qtyJeu}${e.unitJeu||"g"} jeux`;
+      lines.push(r);
+    }
+  });
+  notes.forEach(n=>lines.push(`Note: ${n.text}`));
+  if(lines.length===0) lines.push("Aucun événement ce jour-là.");
+  document.getElementById("summaryText").value=lines.join("\n");
+  document.getElementById("summaryModal").classList.add("open");
+}
+
+// ── Render ────────────────────────────────────────────────────
 function render() {
   document.getElementById("dogNameInput").value=dogName;
   const vd=getViewDate();
@@ -449,8 +426,8 @@ function render() {
     return `<div class="log-item"><div class="log-icon" style="background:${t.bg}">${t.icon}</div><div class="log-info"><div class="log-type">${t.label}${qty}</div><div class="log-time">${fmtTime(e.ts)}${ago}</div></div>${editBtn}<button class="btn-icon" style="color:#d4b09a" onclick="deleteEntry(${e.id})">✕</button></div>`;
   }).join("");
 }
-
 function renderNotes() {
+  const notes=loadNotes(getViewDate());
   const list=document.getElementById("noteList");
   if(notes.length===0){list.innerHTML='<div class="empty"><span class="paw">📝</span>Aucune note ce jour-là.</div>';return;}
   list.innerHTML=notes.map(n=>`<div class="note-card"><div style="flex:1"><div class="note-text">${n.text.replace(/</g,"&lt;")}</div><div class="note-time">${fmtTime(n.ts)}</div></div><button class="btn-icon" style="color:#d4b09a" onclick="deleteNote(${n.id})">✕</button></div>`).join("");
@@ -464,6 +441,7 @@ function showToast(msg){
 }
 
 renderDayNav(); render(); renderNotes();
+setInterval(()=>{ if(currentTab==="journal") render(); },60000);
 </script>
 
 </body>
